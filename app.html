@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HiloNova CAD · Patronaje Digital</title>
+  <meta name="description" content="Software de patronaje digital: patrones 2D, graduación de tallas, trazo optimizado y ficha técnica para producción.">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <script>try{var t=localStorage.getItem('hnv.theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark"><svg viewBox="0 0 24 24"><path d="M5 19V5l7 9V5"/><path d="M12 19l7-14v14"/></svg></div>
+        <div><b>HiloNova CAD</b><small>Patronaje digital</small></div>
+      </div>
+      <div class="proj-chip" id="projChip" title="Renombrar proyecto"></div>
+      <nav class="tabs" id="tabs">
+        <button class="tab" data-view="editor">Diseño</button>
+        <button class="tab" data-view="graduacion">Graduación</button>
+        <button class="tab" data-view="trazo">Trazo</button>
+        <button class="tab" data-view="produccion">Producción</button>
+      </nav>
+      <div class="top-spacer"></div>
+      <span class="muted" id="saveStatus" style="font-size:11.5px"></span>
+      <div class="size-pills" id="sizePills"></div>
+      <button class="btn icon ghost" id="btnUndo" title="Deshacer (Ctrl+Z)"></button>
+      <button class="btn icon ghost" id="btnRedo" title="Rehacer (Ctrl+Y)"></button>
+      <button class="btn icon ghost" id="btnTheme" title="Modo día / noche"></button>
+      <button class="btn pri" id="btnExport"></button>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+      <button class="nav" data-view="proyectos" data-ic="folder"><span>Proyectos</span></button>
+      <button class="nav" data-view="medidas" data-ic="ruler"><span>Tabla de medidas</span></button>
+      <button class="nav" data-view="editor" data-ic="pattern"><span>Patronaje 2D</span></button>
+      <button class="nav" data-view="graduacion" data-ic="grade"><span>Graduación</span></button>
+      <button class="nav" data-view="trazo" data-ic="marker"><span>Trazo</span></button>
+      <div class="nav-sep"></div>
+      <button class="nav" data-view="produccion" data-ic="factory"><span>Ficha y costeo</span></button>
+      <button class="nav" data-view="verificacion" data-ic="shield"><span>Verificación</span></button>
+      <button class="nav" data-view="exportar" data-ic="download"><span>Exportar</span></button>
+      <button class="nav" data-view="config" data-ic="gear"><span>Configuración</span></button>
+      <div class="side-foot"><div class="lic" id="licBadge"></div></div>
+    </aside>
+
+    <main class="main" id="main">
+      <section class="view" id="v-proyectos"></section>
+      <section class="view" id="v-medidas"></section>
+      <section class="view" id="v-editor"></section>
+      <section class="view" id="v-graduacion"></section>
+      <section class="view" id="v-trazo"></section>
+      <section class="view" id="v-produccion"></section>
+      <section class="view" id="v-verificacion"></section>
+      <section class="view" id="v-exportar"></section>
+      <section class="view" id="v-config"></section>
+    </main>
+  </div>
+
+  <div id="gate" class="gate hide"></div>
+  <script type="module" src="assets/js/app/main.js"></script>
+</body>
+</html>

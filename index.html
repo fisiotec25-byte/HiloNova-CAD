@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HiloNova CAD · Software de patronaje digital, graduación y trazo</title>
+  <meta name="description" content="Diseña patrones 2D, gradúa tallas automáticamente y optimiza el trazo de corte desde tu navegador. Ficha técnica, costeo y exportación DXF y PDF 1:1.">
+  <meta property="og:title" content="HiloNova CAD · Patronaje digital avanzado">
+  <meta property="og:description" content="Patrones 2D, graduación de tallas y trazo optimizado para producción. Desde tu navegador.">
+  <meta property="og:image" content="assets/img/screen-trazo.jpg">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#050a16; --panel:rgba(13,22,42,.72); --line:rgba(120,160,255,.14); --line2:rgba(120,160,255,.26); --text:#e7eefb; --muted:#93a2c0; --accent:#3aa8ff; --accent2:#8b7bff; --ok:#34d399; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin:0; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; line-height: 1.55; overflow-x: hidden; }
+    body::before { content:''; position: fixed; inset: 0; z-index: -1; background: radial-gradient(1000px 600px at 85% -10%, rgba(139,123,255,.2), transparent 60%), radial-gradient(900px 600px at -10% 40%, rgba(58,168,255,.14), transparent 60%); }
+    a { color: inherit; text-decoration: none; }
+    svg.ic { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+    .wrap { width: min(1180px, 100% - 40px); margin: 0 auto; }
+    header { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(14px); background: rgba(5,10,22,.72); border-bottom: 1px solid var(--line); }
+    .nav { display: flex; align-items: center; gap: 22px; height: 64px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-family: Sora, Inter; font-weight: 700; font-size: 17px; }
+    .mark { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: linear-gradient(135deg,#1b5fa8,#3aa8ff 55%,#8b7bff); box-shadow: 0 0 20px rgba(58,168,255,.35); }
+    .mark svg { width: 20px; height: 20px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .links { display: flex; gap: 22px; margin-left: 18px; color: var(--muted); font-size: 14px; }
+    .links a:hover { color: var(--text); }
+    .sp { flex: 1; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 11px; font-weight: 600; font-size: 15px; border: 1px solid var(--line2); background: rgba(19,31,58,.6); cursor: pointer; transition: .2s; color: var(--text); }
+    .btn:hover { border-color: var(--accent); }
+    .btn.pri { background: linear-gradient(135deg,#1f7fe0,#3aa8ff); border-color: transparent; color: #fff; box-shadow: 0 0 26px rgba(58,168,255,.35); }
+    .btn.pri:hover { box-shadow: 0 0 0 1px rgba(58,168,255,.6), 0 0 34px rgba(58,168,255,.45); }
+    .btn.sm { height: 38px; padding: 0 15px; font-size: 14px; }
+    .hero { padding: 76px 0 40px; text-align: center; }
+    .eyebrow { display: inline-flex; gap: 8px; align-items: center; padding: 6px 14px; border-radius: 99px; border: 1px solid var(--line2); color: var(--muted); font-size: 13px; letter-spacing: .04em; }
+    .eyebrow b { color: var(--accent); }
+    h1 { font-family: Sora, Inter; font-weight: 800; font-size: clamp(36px, 5.6vw, 66px); line-height: 1.04; margin: 22px auto 18px; max-width: 960px; letter-spacing: -.02em; }
+    h1 .g { background: linear-gradient(90deg,#4cc3ff,#8b7bff 70%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lead { color: var(--muted); font-size: clamp(16px, 1.6vw, 19px); max-width: 720px; margin: 0 auto 30px; }
+    .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .note { margin-top: 14px; color: var(--muted); font-size: 13px; }
+    .shot { margin: 52px auto 0; position: relative; border-radius: 18px; padding: 10px; background: linear-gradient(160deg, rgba(58,168,255,.4), rgba(139,123,255,.25) 40%, rgba(120,160,255,.08)); box-shadow: 0 40px 120px rgba(0,0,0,.55), 0 0 80px rgba(58,168,255,.15); }
+    .shot img { display: block; width: 100%; border-radius: 11px; }
+    .tabs { display: flex; gap: 6px; justify-content: center; margin-top: 26px; flex-wrap: wrap; }
+    .tab { padding: 8px 16px; border-radius: 99px; border: 1px solid var(--line2); color: var(--muted); cursor: pointer; font-size: 14px; background: none; font-family: inherit; }
+    .tab.on { color: #fff; background: rgba(58,168,255,.18); border-color: rgba(58,168,255,.6); }
+    section { padding: 84px 0; }
+    .sh { text-align: center; margin-bottom: 44px; }
+    .sh small { color: var(--accent); letter-spacing: .14em; text-transform: uppercase; font-weight: 600; font-size: 12.5px; }
+    .sh h2 { font-family: Sora, Inter; font-size: clamp(28px, 3.4vw, 40px); margin: 10px 0 10px; letter-spacing: -.01em; }
+    .sh p { color: var(--muted); max-width: 640px; margin: 0 auto; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; }
+    .card { padding: 24px; border-radius: 16px; background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(12px); transition: .2s; }
+    .card:hover { border-color: rgba(58,168,255,.45); transform: translateY(-2px); }
+    .ci { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; background: rgba(58,168,255,.12); color: var(--accent); margin-bottom: 16px; box-shadow: inset 0 0 0 1px rgba(58,168,255,.3); }
+    .card h3 { margin: 0 0 8px; font-size: 18px; font-family: Sora, Inter; }
+    .card p { margin: 0; color: var(--muted); font-size: 14.5px; }
+    .card ul { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; color: var(--muted); font-size: 14px; }
+    .card li { display: flex; gap: 8px; } .card li svg { color: var(--ok); width: 16px; height: 16px; margin-top: 3px; }
+    .flow { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
+    .step { position: relative; padding: 22px 24px 22px 70px; border-radius: 14px; background: linear-gradient(135deg, rgba(58,168,255,.14), rgba(139,123,255,.1)); border: 1px solid var(--line2); clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 50%, calc(100% - 18px) 100%, 0 100%, 18px 50%); }
+    .step:first-child { clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 50%, calc(100% - 18px) 100%, 0 100%); }
+    .step svg { position: absolute; left: 30px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; color: #cfe6ff; }
+    .step b { display: block; font-family: Sora, Inter; } .step span { color: var(--muted); font-size: 13.5px; }
+    .split { display: grid; grid-template-columns: 1.05fr 1fr; gap: 44px; align-items: center; }
+    .split img { width: 100%; border-radius: 14px; border: 1px solid var(--line2); box-shadow: 0 30px 80px rgba(0,0,0,.45); }
+    .split h3 { font-family: Sora, Inter; font-size: 28px; margin: 0 0 12px; }
+    .split p { color: var(--muted); }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .chip { padding: 6px 12px; border-radius: 99px; border: 1px solid var(--line2); color: var(--text); font-size: 13px; background: rgba(19,31,58,.5); }
+    .price { max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; }
+    .plan { padding: 32px; border-radius: 20px; border: 1px solid rgba(58,168,255,.5); background: linear-gradient(160deg, rgba(58,168,255,.16), rgba(139,123,255,.1)); box-shadow: 0 0 60px rgba(58,168,255,.15); }
+    .plan .amt { font-family: Sora, Inter; font-size: 52px; font-weight: 800; margin: 8px 0 2px; }
+    .plan .amt small { font-size: 16px; color: var(--muted); font-weight: 500; }
+    .plan ul { list-style: none; padding: 0; margin: 20px 0 26px; display: grid; gap: 10px; }
+    .plan li { display: flex; gap: 10px; } .plan li svg { color: var(--ok); }
+    .faq details { border-bottom: 1px solid var(--line); padding: 18px 4px; }
+    .faq summary { cursor: pointer; font-weight: 600; font-size: 16px; list-style: none; display: flex; justify-content: space-between; gap: 10px; }
+    .faq summary::after { content: '+'; color: var(--accent); font-size: 22px; line-height: 1; }
+    .faq details[open] summary::after { content: '–'; }
+    .faq p { color: var(--muted); margin: 10px 0 0; }
+    footer { border-top: 1px solid var(--line); padding: 34px 0 44px; color: var(--muted); font-size: 14px; }
+    footer .row { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .wa { position: fixed; right: 20px; bottom: 20px; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: #25d366; box-shadow: 0 10px 30px rgba(37,211,102,.4); z-index: 30; }
+    .wa svg { width: 30px; height: 30px; fill: #fff; }
+    @media (max-width: 900px) { .links { display: none; } .grid, .flow, .split, .price { grid-template-columns: 1fr; } .step, .step:first-child { clip-path: none; } section { padding: 60px 0; } }
+  </style>
+</head>
+<body>
+<header><div class="wrap nav">
+  <a class="brand" href="#"><span class="mark"><svg viewBox="0 0 24 24"><path d="M5 19V5l7 9V5"/><path d="M12 19l7-14v14"/></svg></span>HiloNova CAD</a>
+  <nav class="links"><a href="#modulos">Módulos</a><a href="#flujo">Flujo</a><a href="#exportar">Exportación</a><a href="#precio">Precio</a><a href="#faq">Preguntas</a></nav>
+  <span class="sp"></span>
+  <a class="btn sm" href="app.html">Entrar</a>
+  <a class="btn sm pri" href="app.html?comprar=1">Comprar licencia</a>
+</div></header>
+
+<main>
+  <div class="wrap hero">
+    <span class="eyebrow">Software de patronaje digital · <b>Graduación · Trazo · Producción</b></span>
+    <h1>Patronaje digital <span class="g">avanzado</span>, desde tu navegador</h1>
+    <p class="lead">Diseña patrones 2D, gradúa tallas con reglas por punto y optimiza el acomodo de corte con cálculo de eficiencia y consumo de tela. Sin instalar nada, en Windows, Mac o tablet.</p>
+    <div class="cta"><a class="btn pri" href="app.html">Probar gratis</a><a class="btn" href="#precio">Ver precio</a></div>
+    <div class="note">Crea tu cuenta y prueba todas las herramientas en modo demo.</div>
+    <div class="tabs" id="tabs">
+      <button class="tab on" data-img="patronaje">Patronaje 2D</button><button class="tab" data-img="graduacion">Graduación</button><button class="tab" data-img="trazo">Trazo</button><button class="tab" data-img="produccion">Producción</button>
+    </div>
+    <div class="shot"><img id="shot" src="assets/img/screen-patronaje.jpg" alt="Editor de patronaje 2D con nido de tallas S, M, L y XL" width="1600" height="960"></div>
+  </div>
+
+  <section id="modulos"><div class="wrap">
+    <div class="sh"><small>Módulos</small><h2>Todo el proceso del patrón a la mesa de corte</h2><p>Las mismas etapas que trabajan los sistemas CAD de la industria de la confección, en una herramienta clara y en español.</p></div>
+    <div class="grid">
+      <div class="card"><div class="ci"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3l-3 4v12h6V9l3-2 3 2v10h6V7l-3-4"/><path d="M9 3c0 2 1.3 3 3 3s3-1 3-3"/></svg></div><h3>Patronaje CAD 2D</h3><p>Bases paramétricas trazadas con tus medidas y herramientas de edición precisas.</p><ul><li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Blusa, falda recta y pantalón base</li><li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Curvas, puntos, piquetes, hilo y doblez</li><li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Margen de costura por tramo</li></ul></div>
+      <div class="card"><div class="ci"><svg class="ic" viewBox="0 0 24 24"><path d="M4 20V8l4-4h8l4 4v12"/><path d="M7 20V10l3-3h4l3 3v10"/><path d="M10 20v-7h4v7"/></svg></div><h3>Escalado de tallas</h3><p>Graduación automática desde la tabla de medidas o manual con tabla de reglas.</p><ul><li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Reglas Δx / Δy por punto y talla</li><li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Nido de tallas a color</li><li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Copiar regla, proporcional y espejo</li></ul></div>
+      <div class="card"><div class="ci"><svg class="ic" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="1.5"/><path d="M7 5v14M12 5v8h9.5M12 13v6"/></svg></div><h3>Optimización de tela</h3><p>Acomodo automático que prueba cientos de combinaciones y se queda con el trazo más corto.</p><ul><li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Eficiencia y consumo por talla</li><li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Sentido de tela, orilla y encogimiento</li><li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Piezas en par y al doblez</li></ul></div>
+      <div class="card"><div class="ci"><svg class="ic" viewBox="0 0 24 24"><path d="M3 21V10l6 4V10l6 4V5h6v16z"/></svg></div><h3>Ficha técnica y costeo</h3><p>Costo por prenda con tela, avíos y minutos de confección, y planeación de lote.</p></div>
+      <div class="card"><div class="ci"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Verificación de costuras</h3><p>Compara costados, hombros, copa contra sisa y escote contra cuello en todas las tallas.</p></div>
+      <div class="card"><div class="ci"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg></div><h3>Exportación profesional</h3><p>DXF con capas AAMA, PDF a escala 1:1 en hojas o para plotter, y trazo de corte.</p></div>
+    </div>
+  </div></section>
+
+  <section id="flujo" style="padding-top:20px"><div class="wrap">
+    <div class="sh"><small>Flujo de trabajo</small><h2>De la idea a la producción, con precisión digital</h2></div>
+    <div class="flow">
+      <div class="step"><svg class="ic" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z"/></svg><b>Diseño</b><span>Medidas y concepto</span></div>
+      <div class="step"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3l-3 4v12h6V9l3-2 3 2v10h6V7l-3-4"/></svg><b>Patronaje</b><span>Piezas precisas</span></div>
+      <div class="step"><svg class="ic" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="1.5"/><path d="M7 5v14M12 5v8h9.5"/></svg><b>Producción</b><span>Corte optimizado</span></div>
+      <div class="step"><svg class="ic" viewBox="0 0 24 24"><path d="M3 21h18M5 21V9h14v12M9 9V5h6v4"/></svg><b>Confección</b><span>Mayor eficiencia</span></div>
+    </div>
+  </div></section>
+
+  <section id="exportar"><div class="wrap split">
+    <img src="assets/img/screen-trazo.jpg" alt="Trazo de corte con acomodo automático de cuatro tallas" loading="lazy" width="1600" height="960">
+    <div><h3>Lleva tus patrones a cualquier taller</h3>
+      <p>Imprime el patrón a tamaño real en hojas carta con mapa de armado y cuadro de control, mándalo al plotter o pásalo a otro sistema CAD con DXF por capas.</p>
+      <div class="chips"><span class="chip">DXF-AAMA</span><span class="chip">PDF 1:1 en mosaico</span><span class="chip">PDF para plotter</span><span class="chip">Trazo de corte</span><span class="chip">Ficha técnica PDF</span><span class="chip">SVG en milímetros</span><span class="chip">Proyecto .hnv</span></div>
+    </div>
+  </div></section>
+
+  <section id="precio"><div class="wrap">
+    <div class="sh"><small>Precio</small><h2>Una licencia, todas las herramientas</h2><p>Paga en línea con tarjeta de forma segura. Si eres alumno del curso, canjea tu código de acceso dentro del software.</p></div>
+    <div class="price">
+      <div class="plan"><b id="pNombre">Licencia HiloNova CAD</b><div class="amt">$<span id="pPrecio">—</span> <small id="pMon">MXN · pago único</small></div>
+        <ul id="pIncluye"></ul>
+        <a class="btn pri" style="width:100%" href="app.html?comprar=1">Comprar licencia</a></div>
+      <div class="card" style="display:flex;flex-direction:column;justify-content:center"><div class="ci"><svg class="ic" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3L21 2M17 6l3 3M14 9l2 2"/></svg></div><h3>¿Tomaste el curso de Patronaje Digital?</h3><p>Tu inscripción incluye un código de acceso. Crea tu cuenta, entra a <b>Activar licencia</b> y canjéalo.</p><div style="margin-top:18px"><a class="btn" href="app.html?comprar=1">Canjear código</a></div></div>
+    </div>
+  </div></section>
+
+  <section id="faq" style="padding-top:20px"><div class="wrap faq" style="max-width:820px">
+    <div class="sh"><small>Preguntas frecuentes</small><h2>Antes de empezar</h2></div>
+    <details><summary>¿Necesito instalar algo?</summary><p>No. Funciona en el navegador (Chrome, Edge o Safari actualizados) en computadora o tablet. Tus proyectos se guardan en la nube con tu cuenta.</p></details>
+    <details><summary>¿Reemplaza a Gerber o Lectra?</summary><p>Es una herramienta de patronaje, graduación y trazo para talleres, estudiantes y marcas pequeñas. Exporta DXF con estructura AAMA para continuar en sistemas industriales; valida la importación en tu versión antes de producir.</p></details>
+    <details><summary>¿Qué incluye el modo demo?</summary><p>Puedes crear proyectos, editar patrones, graduar y generar trazos sin límite. La exportación de archivos y el guardado en la nube se activan con la licencia.</p></details>
+    <details><summary>¿Puedo imprimir el patrón en casa?</summary><p>Sí. El PDF en mosaico divide el patrón en hojas carta, A4 u oficio con marcas de unión y un cuadro de control de 5 cm para verificar la escala.</p></details>
+    <details><summary>¿Cómo se paga?</summary><p>Con tarjeta de crédito o débito a través de Stripe. La licencia se activa automáticamente al confirmar el pago.</p></details>
+  </div></section>
+</main>
+
+<footer><div class="wrap row">
+  <a class="brand" href="#"><span class="mark"><svg viewBox="0 0 24 24"><path d="M5 19V5l7 9V5"/><path d="M12 19l7-14v14"/></svg></span>HiloNova</a>
+  <span class="sp"></span>
+  <a href="https://wa.me/522361207101" target="_blank" rel="noopener">WhatsApp 236 120 7101</a>
+  <a href="https://www.facebook.com/HiloNova" target="_blank" rel="noopener">Facebook HiloNova</a>
+  <span>© <span id="yr"></span> HiloNova</span>
+</div></footer>
+<a class="wa" href="https://wa.me/522361207101" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.8-.1 1.4z"/></svg></a>
+<script type="module">
+  import { PLAN } from './assets/js/firebase-config.js';
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  document.getElementById('pNombre').textContent = PLAN.nombre;
+  document.getElementById('pPrecio').textContent = PLAN.precio.toLocaleString('es-MX');
+  document.getElementById('pMon').textContent = `${PLAN.moneda} · ${PLAN.periodo}`;
+  const ck = '<svg class="ic" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';
+  document.getElementById('pIncluye').innerHTML = PLAN.incluye.map((x) => `<li>${ck}<span>${x}</span></li>`).join('');
+  const img = document.getElementById('shot');
+  document.querySelectorAll('#tabs .tab').forEach((t) => t.addEventListener('click', () => {
+    document.querySelectorAll('#tabs .tab').forEach((x) => x.classList.toggle('on', x === t));
+    img.src = `assets/img/screen-${t.dataset.img}.jpg`;
+  }));
+</script>
+</body>
+</html>

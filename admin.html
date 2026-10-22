@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Panel de licencias · HiloNova CAD</title>
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/app.css">
+  <style>body{overflow:auto}.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22px 60px}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="page-h"><div class="brand"><div class="brand-mark"><svg viewBox="0 0 24 24"><path d="M5 19V5l7 9V5"/><path d="M12 19l7-14v14"/></svg></div><div><b>Panel de licencias</b><small>HiloNova CAD</small></div></div>
+    <div class="row"><input class="input" type="password" id="key" placeholder="Clave de administrador" style="width:260px"><button class="btn pri" id="go">Entrar</button></div></div>
+
+  <div id="body" class="hide" style="display:flex;flex-direction:column;gap:16px">
+    <div class="grid3" id="kpis"></div>
+    <div class="grid2" style="align-items:start">
+      <div class="card"><div class="card-h">Generar códigos de alumno</div><div class="card-b" style="display:flex;flex-direction:column;gap:10px">
+        <div class="grid3"><div class="field"><label>Cantidad</label><input class="input num" type="number" id="cant" value="25" min="1" max="500"></div>
+        <div class="field"><label>Prefijo</label><input class="input" id="pref" value="HN"></div>
+        <div class="field"><label>Días de acceso (vacío = sin vencimiento)</label><input class="input num" type="number" id="dias" placeholder="365"></div></div>
+        <div class="field"><label>Nota (grupo, fecha de curso)</label><input class="input" id="nota" placeholder="Curso Patronaje Digital · 09 nov"></div>
+        <div class="row"><button class="btn pri" id="gen">Generar</button><button class="btn" id="copy">Copiar nuevos</button><span class="muted" id="genMsg"></span></div>
+        <textarea class="input mono" id="nuevos" rows="6" readonly placeholder="Aquí aparecen los códigos generados"></textarea>
+      </div></div>
+      <div class="card"><div class="card-h">Licencia manual por correo</div><div class="card-b" style="display:flex;flex-direction:column;gap:10px">
+        <div class="field"><label>Correo de la cuenta (el usuario debe estar registrado)</label><input class="input" id="email" type="email"></div>
+        <div class="row"><button class="btn pri" id="dar">Activar licencia</button><button class="btn danger" id="quitar">Revocar</button><span class="muted" id="licMsg"></span></div>
+      </div></div>
+    </div>
+    <div class="card"><div class="card-h"><span>Códigos</span><input class="input" id="fil" placeholder="Buscar código, correo o nota" style="width:280px"></div><div style="max-height:420px;overflow:auto"><table class="tbl" id="tCod"></table></div></div>
+    <div class="card"><div class="card-h">Licencias activas</div><div style="max-height:420px;overflow:auto"><table class="tbl" id="tLic"></table></div></div>
+  </div>
+</div>
+<script type="module">
+  import { API_URL } from '../assets/js/firebase-config.js';
+  const $ = (s) => document.querySelector(s);
+  let KEY = sessionStorage.getItem('hnv.admin') || '';
+  let codigos = [];
+  const api = async (path, opt = {}) => {
+    const r = await fetch(API_URL + path, { ...opt, headers: { 'Content-Type': 'application/json', 'x-admin-key': KEY, ...(opt.headers || {}) } });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || 'Error ' + r.status);
+    return j;
+  };
+  const fdate = (ms) => ms ? new Date(ms).toLocaleDateString('es-MX', { dateStyle: 'medium' }) : '—';
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function drawCod() {
+    const f = $('#fil').value.toLowerCase();
+    const rows = codigos.filter((c) => !f || [c.codigo, c.email, c.nota].join(' ').toLowerCase().includes(f));
+    $('#tCod').innerHTML = `<tr><th>Código</th><th>Estado</th><th>Correo</th><th>Nota</th><th>Días</th><th>Creado</th><th>Usado</th></tr>` +
+      rows.map((c) => `<tr><td class="mono">${esc(c.codigo)}</td><td><span class="badge ${c.usado ? 'ok' : ''}">${c.usado ? 'Canjeado' : 'Disponible'}</span></td><td>${esc(c.email || '')}</td><td>${esc(c.nota || '')}</td><td class="num">${c.dias || '∞'}</td><td>${fdate(c.creado)}</td><td>${fdate(c.usadoEn)}</td></tr>`).join('');
+  }
+  async function cargar() {
+    const [c, l] = await Promise.all([api('/admin/codigos'), api('/admin/licencias')]);
+    codigos = c.codigos; drawCod();
+    const lic = l.licencias;
+    $('#tLic').innerHTML = `<tr><th>Correo</th><th>Tipo</th><th>Desde</th><th>Vence</th></tr>` + lic.map((x) => `<tr><td>${esc(x.email || x.uid)}</td><td>${esc(x.tipo || '')}</td><td>${fdate(x.desde)}</td><td>${fdate(x.vence)}</td></tr>`).join('');
+    const pago = lic.filter((x) => x.tipo === 'pago' || x.tipo === 'subscription').length;
+    $('#kpis').innerHTML = [['Licencias activas', lic.length], ['Compradas con Stripe', pago], ['Códigos disponibles', codigos.filter((x) => !x.usado).length]].map(([k, v]) => `<div class="kpi"><small>${k}</small><b>${v}</b></div>`).join('');
+  }
+  async function entrar() {
+    KEY = $('#key').value || KEY;
+    try { await cargar(); sessionStorage.setItem('hnv.admin', KEY); $('#body').classList.remove('hide'); }
+    catch (e) { alert(e.message); }
+  }
+  $('#go').onclick = entrar;
+  $('#fil').oninput = drawCod;
+  $('#gen').onclick = async () => {
+    $('#genMsg').textContent = 'Generando…';
+    try { const r = await api('/admin/codigos', { method: 'POST', body: JSON.stringify({ cantidad: +$('#cant').value, prefijo: $('#pref').value, dias: +$('#dias').value || null, nota: $('#nota').value }) }); $('#nuevos').value = r.codigos.join('\n'); $('#genMsg').textContent = r.codigos.length + ' códigos creados'; cargar(); }
+    catch (e) { $('#genMsg').textContent = e.message; }
+  };
+  $('#copy').onclick = () => { navigator.clipboard.writeText($('#nuevos').value); $('#genMsg').textContent = 'Copiados'; };
+  const lic = async (activa) => { try { await api('/admin/licencia', { method: 'POST', body: JSON.stringify({ email: $('#email').value, activa }) }); $('#licMsg').textContent = activa ? 'Licencia activada' : 'Licencia revocada'; cargar(); } catch (e) { $('#licMsg').textContent = e.message; } };
+  $('#dar').onclick = () => lic(true);
+  $('#quitar').onclick = () => lic(false);
+  if (KEY) entrar();
+</script>
+</body>
+</html>
